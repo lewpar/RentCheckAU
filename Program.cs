@@ -52,18 +52,25 @@ namespace RentCheckAU
             content = content.Replace("\r", "");
             content = content.Replace("\n", "");
 
-            var matches = Regex.Match(content, "<.*All Units.*?<div>(.*?)<\\/div>");
+            var matches = Regex.Match(content, "<.*All Houses.*?<div>(.*?)<\\/div>.*?All Units.*?<div>(.*?)<\\/div>");
 
             if (!matches.Success ||
                 matches.Groups.Count < 2)
             {
-                Console.WriteLine("Failed to find any regex matches for unit pricing.");
+                Console.WriteLine("Failed to find any regex matches for house/unit pricing.");
                 return;
             }
 
-            string? rentAvg = matches.Groups[1].Value.Trim();
+            string? rentAvgHouses = matches.Groups[1].Value.Trim();
 
-            Console.WriteLine($"The average rent for the postcode '{postCode}' is '{rentAvg}' AUD.");
+            Console.WriteLine($"The average rent for houses in the postcode '{postCode}' is '{rentAvgHouses}' AUD/wk.");
+
+            if (matches.Groups.Count > 2)
+            {
+                string? rentAvgUnits = matches.Groups[2].Value.Trim();
+
+                Console.WriteLine($"The average rent for units in the postcode '{postCode}' is '{rentAvgUnits}' AUD/wk.");
+            }
 
             Console.WriteLine("Press ENTER to search another postcode.");
             Console.ReadLine();
